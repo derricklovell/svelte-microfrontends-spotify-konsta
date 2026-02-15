@@ -1,0 +1,144 @@
+Safe Areas
+
+With the iPhone X release and further, Apple introduced so called safe areas, later implemented by Google Chrome with support in Android.
+
+On devices with safe areas (like with top screen notch), app UI must include additional top/bottom spacing (to consider top notch and bottom bar) in portrait orientation and additional left/right spacing (to consider left/right notch) in landscape orientation.
+
+Contents
+
+Viewport
+Safe Areas
+Disable Safe Areas
+Safe Spacing & Placement
+Viewport
+
+If your app targets full screen mobile devices, make sure you have viewport-fit=cover in your <meta name="viewport">, e.g.:
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    ...
+    <!-- Make sure you have viewport-fit=cover in content -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+  </head>
+
+  <body>
+    ...
+  </body>
+</html>
+Safe Areas
+
+To tell our components that our app is a full screen app and we need to consider safe areas, we need to add safe-areas class to Konsta UI components parent element, preferably to the root app element.
+
+<!-- App.svelte  -->
+<!-- add "safe-areas" class to the app root element -->
+<div id="my-app" class="safe-areas">...</div>
+If you use Konsta UI's App component, then it can be enabled with safeAreas prop:
+
+<!-- App.svelte -->
+<script>
+  import { App } from 'konsta/svelte';
+</script>
+
+<!-- enable with safeAreas prop -->
+<App safeAreas theme="ios">
+  <HomePage />
+</App>
+This is how safe-areas class defined in CSS:
+
+:root: {
+  --k-safe-area-left: 0px;
+  --k-safe-area-right: 0px;
+  --k-safe-area-top: 0px;
+  --k-safe-area-bottom: 0px;
+}
+
+@supports (left: env(safe-area-inset-left)):  {
+  .safe-areas: {
+    --k-safe-area-left: env(safe-area-inset-left);
+    --k-safe-area-right: env(safe-area-inset-right);
+    --k-safe-area-top: env(safe-area-inset-top);
+    --k-safe-area-bottom: env(safe-area-inset-bottom);
+  }
+}
+Disable Safe Areas
+
+It can be useful to disable safe areas on modals and side panels which are not full screen elements.
+
+We can disable safe areas on certain elements with the following utility classes:
+
+Class	
+.no-safe-areas	Disable all safe areas on element
+.no-safe-areas-top	Disable top safe area on element
+.no-safe-areas-right	Disable right safe area on element
+.no-safe-areas-bottom	Disable bottom safe area on element
+.no-safe-areas-left	Disable left safe area on element
+This is how no-safe-areas classes defined in CSS:
+
+@supports (left: env(safe-area-inset-left)):  {
+  .no-safe-areas: {
+    --k-safe-area-left: 0px;
+    --k-safe-area-right: 0px;
+    --k-safe-area-top: 0px;
+    --k-safe-area-bottom: 0px;
+  }
+  .no-safe-areas-top: {
+    --k-safe-area-top: 0px;
+  }
+  .no-safe-areas-right: {
+    --k-safe-area-right: 0px;
+  }
+  .no-safe-areas-bottom: {
+    --k-safe-area-bottom: 0px;
+  }
+  .no-safe-areas-left: {
+    --k-safe-area-left: 0px;
+  }
+}
+Safe Spacing & Placement
+
+We can also consider safe areas when placing elements:
+
+Class	CSS
+.top-safe	top: var(--k-safe-area-top)
+.top-safe-[value]	top: calc([value] + var(--k-safe-area-top))
+.right-safe	right: var(--k-safe-area-right)
+.right-safe-[value]	right: calc([value] + var(--k-safe-area-right))
+.bottom-safe	bottom: var(--k-safe-area-bottom)
+.bottom-safe-[value]	bottom: calc([value] + var(--k-safe-area-bottom))
+.left-safe	left: var(--k-safe-area-left)
+.left-safe-[value]	left: calc([value] + var(--k-safe-area-left))
+And same with margin and padding:
+
+Class	CSS
+.pt-safe	padding-top: var(--k-safe-area-top)
+.pt-safe-[value]	padding-top: calc([value] + var(--k-safe-area-top))
+.pr-safe	padding-right: var(--k-safe-area-right)
+.pr-safe-[value]	padding-right: calc([value] + var(--k-safe-area-right))
+.pb-safe	padding-bottom: var(--k-safe-area-bottom)
+.pb-safe-[value]	padding-bottom: calc([value] + var(--k-safe-area-bottom))
+.pl-safe	padding-left: var(--k-safe-area-left)
+.pl-safe-[value]	padding-left: calc([value] + var(--k-safe-area-left))
+Class	CSS
+.mt-safe	margin-top: var(--k-safe-area-top)
+.mt-safe-[value]	margin-top: calc([value] + var(--k-safe-area-top))
+.mr-safe	margin-right: var(--k-safe-area-right)
+.mr-safe-[value]	margin-right: calc([value] + var(--k-safe-area-right))
+.mb-safe	margin-bottom: var(--k-safe-area-bottom)
+.mb-safe-[value]	margin-bottom: calc([value] + var(--k-safe-area-bottom))
+.ml-safe	margin-left: var(--k-safe-area-left)
+.ml-safe-[value]	margin-left: calc([value] + var(--k-safe-area-left))
+For example:
+
+<!--
+"left-safe" class will set:
+  left: var(--k-safe-area-top);
+
+"bottom-4-safe" class will set:
+  bottom: calc(1rem + var(--k-safe-area-bottom));
+-->
+<div class="left-safe bottom-4-safe">...</div>
+;

@@ -1,170 +1,167 @@
 <script>
+	import { Block, Button, Range, Toolbar, Link } from 'konsta/svelte';
 	import { NEXT_SONG_EVENT } from '../../shared/shared';
-	import { BehaviorSubject } from 'rxjs';
+
+	let isPlaying = false;
+	let progress = 0;
+	let volume = 75;
+	let isShuffled = false;
+	let repeatMode = 0;
 </script>
 
-<div
-	class="flex h-24 w-full bg-dark border-t border-t-dark-3 fixed bottom-0 left-0"
->
-	<div class="flex-1" />
-	<div class="flex-1 flex justify-center items-center flex-col">
-		<div class="flex justify-center items-center">
-			<svg
-				id=""
-				class="text-dark-2 mr-6 svelte-fa svelte-1w3t65e"
-				style="height:1em;font-size:18;vertical-align:-.125em;transform-origin:center;overflow:visible"
-				viewBox="0 0 512 512"
-				aria-hidden="true"
-				role="img"
-				xmlns="http://www.w3.org/2000/svg"
-				><g transform="translate(256 256)"
-					><g transform="translate(0,0) scale(1,1)"
-						><path
-							d="M403.8 34.4c12-5 25.7-2.2 34.9 6.9l64 64c6 6 9.4 14.1 9.4 22.6s-3.4 16.6-9.4 22.6l-64 64c-9.2 9.2-22.9 11.9-34.9 6.9s-19.8-16.6-19.8-29.6V160H352c-10.1 0-19.6 4.7-25.6 12.8L284 229.3 244 176l31.2-41.6C293.3 110.2 321.8 96 352 96h32V64c0-12.9 7.8-24.6 19.8-29.6zM164 282.7L204 336l-31.2 41.6C154.7 401.8 126.2 416 96 416H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H96c10.1 0 19.6-4.7 25.6-12.8L164 282.7zm274.6 188c-9.2 9.2-22.9 11.9-34.9 6.9s-19.8-16.6-19.8-29.6V416H352c-30.2 0-58.7-14.2-76.8-38.4L121.6 172.8c-6-8.1-15.5-12.8-25.6-12.8H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H96c30.2 0 58.7 14.2 76.8 38.4L326.4 339.2c6 8.1 15.5 12.8 25.6 12.8h32V320c0-12.9 7.8-24.6 19.8-29.6s25.7-2.2 34.9 6.9l64 64c6 6 9.4 14.1 9.4 22.6s-3.4 16.6-9.4 22.6l-64 64z"
-							fill="currentColor"
-							transform="translate(-256 -256)"
-						/></g
-					></g
-				></svg
-			>
-			<svg
-				id=""
-				class="text-dark-2 svelte-fa svelte-1w3t65e"
-				style="height:1em;font-size:20;vertical-align:-.125em;transform-origin:center;overflow:visible"
-				viewBox="0 0 320 512"
-				aria-hidden="true"
-				role="img"
-				xmlns="http://www.w3.org/2000/svg"
-				><g transform="translate(160 256)"
-					><g transform="translate(0,0) scale(1,1)"
-						><path
-							d="M267.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4l-192 160L64 241V96c0-17.7-14.3-32-32-32S0 78.3 0 96V416c0 17.7 14.3 32 32 32s32-14.3 32-32V271l11.5 9.6 192 160z"
-							fill="currentColor"
-							transform="translate(-160 -256)"
-						/></g
-					></g
-				></svg
-			>
-			<svg
-				id=""
-				class="text-dark-2 mx-6 svelte-fa svelte-1w3t65e"
-				style="height:1em;font-size:32;vertical-align:-.125em;transform-origin:center;overflow:visible"
-				viewBox="0 0 512 512"
-				aria-hidden="true"
-				role="img"
-				xmlns="http://www.w3.org/2000/svg"
-				><g transform="translate(256 256)"
-					><g transform="translate(0,0) scale(1,1)"
-						><path
-							d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM224 192V320c0 17.7-14.3 32-32 32s-32-14.3-32-32V192c0-17.7 14.3-32 32-32s32 14.3 32 32zm128 0V320c0 17.7-14.3 32-32 32s-32-14.3-32-32V192c0-17.7 14.3-32 32-32s32 14.3 32 32z"
-							fill="currentColor"
-							transform="translate(-256 -256)"
-						/></g
-					></g
-				></svg
-			>
-			<svg
-				id=""
-				class="text-dark-2 svelte-fa svelte-1w3t65e"
-				style="height:1em;font-size:20;vertical-align:-.125em;transform-origin:center;overflow:visible"
-				viewBox="0 0 320 512"
-				aria-hidden="true"
-				role="img"
-				xmlns="http://www.w3.org/2000/svg"
-				on:click={() => {
-					const customEvent = new CustomEvent(NEXT_SONG_EVENT);
-					window.dispatchEvent(customEvent);
-				}}
-				><g transform="translate(160 256)"
-					><g transform="translate(0,0) scale(1,1)"
-						><path
-							d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96C0 83.6 7.2 72.3 18.4 67s24.5-3.6 34.1 4.4l192 160L256 241V96c0-17.7 14.3-32 32-32s32 14.3 32 32V416c0 17.7-14.3 32-32 32s-32-14.3-32-32V271l-11.5 9.6-192 160z"
-							fill="white"
-							transform="translate(-160 -256)"
-						/></g
-					></g
-				></svg
-			>
-			<svg
-				id=""
-				class="text-dark-2 ml-6 svelte-fa svelte-1w3t65e"
-				style="height:1em;font-size:18;vertical-align:-.125em;transform-origin:center;overflow:visible"
-				viewBox="0 0 512 512"
-				aria-hidden="true"
-				role="img"
-				xmlns="http://www.w3.org/2000/svg"
-				><g transform="translate(256 256)"
-					><g transform="translate(0,0) scale(1,1)"
-						><path
-							d="M0 224c0 17.7 14.3 32 32 32s32-14.3 32-32c0-53 43-96 96-96H320v32c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l64-64c12.5-12.5 12.5-32.8 0-45.3l-64-64c-9.2-9.2-22.9-11.9-34.9-6.9S320 19.1 320 32V64H160C71.6 64 0 135.6 0 224zm512 64c0-17.7-14.3-32-32-32s-32 14.3-32 32c0 53-43 96-96 96H192V352c0-12.9-7.8-24.6-19.8-29.6s-25.7-2.2-34.9 6.9l-64 64c-12.5 12.5-12.5 32.8 0 45.3l64 64c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.6 19.8-29.6V448H352c88.4 0 160-71.6 160-160z"
-							fill="currentColor"
-							transform="translate(-256 -256)"
-						/></g
-					></g
-				></svg
-			>
+<div class="now-playing-gradient border-t border-tahoe-separator h-[72px] w-full fixed bottom-0 left-0 z-50">
+	<div class="flex items-center h-full px-4 gap-4 max-w-screen-2xl mx-auto">
+		<!-- Left: Track info placeholder -->
+		<div class="flex items-center gap-3 w-1/4 min-w-0">
+			<div class="w-12 h-12 rounded-lg bg-tahoe-elevated shrink-0 flex items-center justify-center">
+				<svg class="w-5 h-5 text-tahoe-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
+					<path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+				</svg>
+			</div>
+			<div class="min-w-0">
+				<div class="text-white text-sm font-medium truncate">Waiting...</div>
+				<div class="text-tahoe-text-secondary text-xs truncate">Select a track</div>
+			</div>
 		</div>
-		<div class="w-full flex mt-4">
-			<span class="text-dark-1 text-xs mr-2">0:00</span>
-			<div class="h-1 w-full rounded-md self-center bg-dark-2" />
-			<span class="text-dark-1 text-xs ml-2">0:00</span>
+
+		<!-- Center: Controls + progress -->
+		<div class="flex-1 flex flex-col items-center max-w-xl mx-auto">
+			<div class="flex items-center gap-4 mb-1">
+				<!-- Shuffle -->
+				<button
+					class="transition-colors {isShuffled ? 'text-tahoe-accent' : 'text-tahoe-text-secondary'} hover:text-white"
+					on:click={() => (isShuffled = !isShuffled)}
+				>
+					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+						<path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
+					</svg>
+				</button>
+
+				<!-- Previous -->
+				<button class="text-white hover:scale-105 transition-transform">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+						<path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+					</svg>
+				</button>
+
+				<!-- Play/Pause -->
+				<button
+					class="w-9 h-9 rounded-full bg-white flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+					on:click={() => (isPlaying = !isPlaying)}
+				>
+					{#if isPlaying}
+						<svg class="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
+							<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+						</svg>
+					{:else}
+						<svg class="w-4 h-4 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+							<path d="M8 5v14l11-7z" />
+						</svg>
+					{/if}
+				</button>
+
+				<!-- Next -->
+				<Button
+					clear
+					small
+					class="!p-0 !min-w-0"
+					on:click={() => {
+						const customEvent = new CustomEvent(NEXT_SONG_EVENT);
+						window.dispatchEvent(customEvent);
+					}}
+				>
+					<svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+						<path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+					</svg>
+				</Button>
+
+				<!-- Repeat -->
+				<button
+					class="transition-colors relative {repeatMode > 0 ? 'text-tahoe-accent' : 'text-tahoe-text-secondary'} hover:text-white"
+					on:click={() => (repeatMode = (repeatMode + 1) % 3)}
+				>
+					<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+						<path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+					</svg>
+					{#if repeatMode === 2}
+						<span class="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[7px] font-bold text-tahoe-accent">1</span>
+					{/if}
+				</button>
+			</div>
+
+			<!-- Progress bar -->
+			<div class="w-full flex items-center gap-2">
+				<span class="text-tahoe-text-tertiary text-[11px] w-8 text-right tabular-nums">0:00</span>
+				<div class="flex-1">
+					<Range
+						value={progress}
+						min={0}
+						max={100}
+						step={1}
+						onInput={(e) => (progress = e.target.value)}
+					/>
+				</div>
+				<span class="text-tahoe-text-tertiary text-[11px] w-8 tabular-nums">0:00</span>
+			</div>
 		</div>
-	</div>
-	<div class="flex-1 flex justify-end items-center pr-6">
-		<svg
-			id=""
-			class="text-dark-1 mr-6 svelte-fa svelte-1w3t65e"
-			style="height:1em;font-size:16;vertical-align:-.125em;transform-origin:center;overflow:visible"
-			viewBox="0 0 512 512"
-			aria-hidden="true"
-			role="img"
-			xmlns="http://www.w3.org/2000/svg"
-			><g transform="translate(256 256)"
-				><g transform="translate(0,0) scale(1,1)"
-					><path
-						d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"
-						fill="currentColor"
-						transform="translate(-256 -256)"
-					/></g
-				></g
-			></svg
-		>
-		<svg
-			id=""
-			class="text-dark-1 mr-6 svelte-fa svelte-1w3t65e"
-			style="height:1em;font-size:16;vertical-align:-.125em;transform-origin:center;overflow:visible"
-			viewBox="0 0 384 512"
-			aria-hidden="true"
-			role="img"
-			xmlns="http://www.w3.org/2000/svg"
-			><g transform="translate(192 256)"
-				><g transform="translate(0,0) scale(1,1)"
-					><path
-						d="M16 64C16 28.7 44.7 0 80 0H304c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H80c-35.3 0-64-28.7-64-64V64zM144 448c0 8.8 7.2 16 16 16h64c8.8 0 16-7.2 16-16s-7.2-16-16-16H160c-8.8 0-16 7.2-16 16zM304 64H80V384H304V64z"
-						fill="currentColor"
-						transform="translate(-192 -256)"
-					/></g
-				></g
-			></svg
-		>
-		<svg
-			id=""
-			class="text-dark-1 mr-2 svelte-fa svelte-1w3t65e"
-			style="height:1em;font-size:16;vertical-align:-.125em;transform-origin:center;overflow:visible"
-			viewBox="0 0 640 512"
-			aria-hidden="true"
-			role="img"
-			xmlns="http://www.w3.org/2000/svg"
-			><g transform="translate(320 256)"
-				><g transform="translate(0,0) scale(1,1)"
-					><path
-						d="M533.6 32.5C598.5 85.3 640 165.8 640 256s-41.5 170.8-106.4 223.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C557.5 398.2 592 331.2 592 256s-34.5-142.2-88.7-186.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM473.1 107c43.2 35.2 70.9 88.9 70.9 149s-27.7 113.8-70.9 149c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C475.3 341.3 496 301.1 496 256s-20.7-85.3-53.2-111.8c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zm-60.5 74.5C434.1 199.1 448 225.9 448 256s-13.9 56.9-35.4 74.5c-10.3 8.4-25.4 6.8-33.8-3.5s-6.8-25.4 3.5-33.8C393.1 284.4 400 271 400 256s-6.9-28.4-17.7-37.3c-10.3-8.4-11.8-23.5-3.5-33.8s23.5-11.8 33.8-3.5zM301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3z"
-						fill="currentColor"
-						transform="translate(-320 -256)"
-					/></g
-				></g
-			></svg
-		>
-		<div class="h-1 w-24 rounded-md self-center bg-white" />
+
+		<!-- Right: Volume + extras -->
+		<div class="flex items-center gap-3 w-1/4 justify-end">
+			<!-- Queue -->
+			<button class="text-tahoe-text-secondary hover:text-white transition-colors hidden lg:block">
+				<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+					<path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+				</svg>
+			</button>
+
+			<!-- Device -->
+			<button class="text-tahoe-text-secondary hover:text-white transition-colors hidden lg:block">
+				<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd" />
+				</svg>
+			</button>
+
+			<!-- Volume -->
+			<svg class="w-4 h-4 text-tahoe-text-secondary shrink-0" fill="currentColor" viewBox="0 0 24 24">
+				<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+			</svg>
+			<div class="w-24 hidden md:block">
+				<Range
+					value={volume}
+					min={0}
+					max={100}
+					step={1}
+					onInput={(e) => (volume = e.target.value)}
+				/>
+			</div>
+		</div>
 	</div>
 </div>
+
+<style>
+	.now-playing-gradient {
+		background: linear-gradient(180deg, rgba(44, 44, 46, 0.9) 0%, rgba(30, 30, 30, 0.95) 100%);
+		backdrop-filter: blur(40px);
+		-webkit-backdrop-filter: blur(40px);
+	}
+
+	.text-tahoe-text-secondary {
+		color: rgba(235, 235, 245, 0.6);
+	}
+
+	.text-tahoe-text-tertiary {
+		color: rgba(235, 235, 245, 0.3);
+	}
+
+	.text-tahoe-accent {
+		color: #0A84FF;
+	}
+
+	.bg-tahoe-elevated {
+		background: rgba(58, 58, 60, 0.75);
+	}
+
+	.border-tahoe-separator {
+		border-color: rgba(84, 84, 88, 0.65);
+	}
+</style>

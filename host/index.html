@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
-
   <!--
     We need to add the shim _before_ we load any es modules
   -->
-
   <script type="esms-options">
     {
         "shimMode": true
@@ -17,8 +15,31 @@
 
   <meta charset="UTF-8" />
   <link rel='icon' type='image/png' href='/favicon.png'>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Module Federation Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#1e1e1e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Music Player</title>
+
+  <!-- System fonts with SF Pro fallback -->
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #1e1e1e;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      color-scheme: dark;
+    }
+    #app {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
 </head>
 
 <body>
