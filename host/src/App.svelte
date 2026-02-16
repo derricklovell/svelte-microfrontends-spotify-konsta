@@ -399,26 +399,53 @@
 	<!-- Mobile Tabbar — hidden when NowPlaying popup is open -->
 	{#if isMobile && !$nowPlayingOpen}
 		<Tabbar
-			labels icons
-			class="!fixed !bottom-0 !left-0 !right-0 !z-[90] tahoe-toolbar border-t border-tahoe-separator"
-			colors={{ bgIos: 'bg-transparent', bgMaterial: 'bg-transparent' }}
+			icons
+			labels
+			class="!fixed !bottom-0 !left-0 !right-0 !z-[90]"
+			colors={{
+				bgIos: 'bg-[#1a1a1c]/95 backdrop-blur-xl',
+			}}
 		>
-			<TabbarLink active={$currentPage === 'home'} label="Home" on:click={() => navigateTo('home')}
-				colors={{ textActiveIos: 'text-tahoe-accent', textActiveDesktop: 'text-tahoe-accent', iconBgActiveIos: 'bg-transparent' }}
+			<TabbarLink
+				active={$currentPage === 'home'}
+				label="Home"
+				on:click={() => navigateTo('home')}
+				colors={{
+					textActiveIos: 'text-tahoe-accent',
+					textIos: 'text-tahoe-text-secondary',
+					iconBgActiveIos: 'bg-transparent',
+					iconBgIos: 'bg-transparent',
+				}}
 			>
 				<svelte:fragment slot="icon">
 					<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
 				</svelte:fragment>
 			</TabbarLink>
-			<TabbarLink active={$currentPage === 'search'} label="Search" on:click={() => navigateTo('search')}
-				colors={{ textActiveIos: 'text-tahoe-accent', textActiveDesktop: 'text-tahoe-accent', iconBgActiveIos: 'bg-transparent' }}
+			<TabbarLink
+				active={$currentPage === 'search'}
+				label="Search"
+				on:click={() => navigateTo('search')}
+				colors={{
+					textActiveIos: 'text-tahoe-accent',
+					textIos: 'text-tahoe-text-secondary',
+					iconBgActiveIos: 'bg-transparent',
+					iconBgIos: 'bg-transparent',
+				}}
 			>
 				<svelte:fragment slot="icon">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
 				</svelte:fragment>
 			</TabbarLink>
-			<TabbarLink active={$currentPage === 'library'} label="Library" on:click={() => navigateTo('library')}
-				colors={{ textActiveIos: 'text-tahoe-accent', textActiveDesktop: 'text-tahoe-accent', iconBgActiveIos: 'bg-transparent' }}
+			<TabbarLink
+				active={$currentPage === 'library'}
+				label="Library"
+				on:click={() => navigateTo('library')}
+				colors={{
+					textActiveIos: 'text-tahoe-accent',
+					textIos: 'text-tahoe-text-secondary',
+					iconBgActiveIos: 'bg-transparent',
+					iconBgIos: 'bg-transparent',
+				}}
 			>
 				<svelte:fragment slot="icon">
 					<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" /></svg>
