@@ -396,12 +396,12 @@
 		</div>
 	{/if}
 
-	<!-- Mobile Tabbar — hidden when NowPlaying popup is open -->
-	{#if isMobile && !$nowPlayingOpen}
+	<!-- Tabbar for navigation (visible on all screen sizes for testing) -->
+	{#if !$nowPlayingOpen}
 		<Tabbar
 			icons
 			labels
-			class="!fixed !bottom-0 !left-0 !right-0 !z-[90]"
+			class="!fixed !bottom-0 !left-0 !right-0 !z-[90] {isDesktop ? '!ml-64 xl:!ml-72' : ''}"
 			colors={{
 				bgIos: 'bg-[#1a1a1c]/95 backdrop-blur-xl',
 			}}
