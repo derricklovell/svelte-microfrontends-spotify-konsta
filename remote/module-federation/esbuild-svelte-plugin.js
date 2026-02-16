@@ -7,7 +7,7 @@ export const sveltePlugin = {
 	setup(build) {
 		build.onLoad({ filter: /\.svelte$/ }, async (args) => {
 			// This converts a message in Svelte's format to esbuild's format
-			let convertMessage = ({ message, start, end }) => {
+			let convertMessage = (source, filename, { message, start, end }) => {
 				let location;
 				if (start && end) {
 					let lineText = source.split(/\r\n|\r|\n/g)[start.line - 1];
@@ -27,13 +27,14 @@ export const sveltePlugin = {
 			let source = await fs.promises.readFile(args.path, 'utf8');
 			let filename = path.relative(process.cwd(), args.path);
 
-			// Convert Svelte syntax to JavaScript
+			// Convert Svelte syntax to JavaScript (Svelte 5 compatible)
 			try {
-				let { js, warnings } = svelteCompiler.compile(source, { filename });
-				let contents = js.code + `//# sourceMappingURL=` + js.map.toUrl();
-				return { contents, warnings: warnings.map(convertMessage) };
+				let result = svelteCompiler.compile(source, { filename });
+				let contents = result.js.code + `//# sourceMappingURL=` + result.js.map.toUrl();
+				let warnings = (result.warnings || []).map((warning) => convertMessage(source, filename, warning));
+				return { contents, warnings };
 			} catch (e) {
-				return { errors: [convertMessage(e)] };
+				return { errors: [convertMessage(source, filename, e)] };
 			}
 		});
 	},

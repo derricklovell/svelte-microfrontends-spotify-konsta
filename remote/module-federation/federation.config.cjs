@@ -1,6 +1,5 @@
 const {
   withNativeFederation,
-  shareAll,
 } = require("@softarc/native-federation/build");
 
 module.exports = withNativeFederation({
@@ -8,12 +7,6 @@ module.exports = withNativeFederation({
   exposes: {
     "./remote-mediaplayer": "./src/MediaPlayer.svelte"
   },
-  shared: {
-    ...shareAll()
-  }
+  shared: {},
+  skipSharingNextInternals: true
 });
-
-
-
-
-

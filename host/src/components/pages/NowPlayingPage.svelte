@@ -2,14 +2,19 @@
 	import { createEventDispatcher } from 'svelte';
 	import { Range } from 'konsta/svelte';
 	import { nowPlayingOpen } from '../../stores/navigation';
+	import { activeTrack, playTrack } from '../../stores/media';
 	import { musics } from '../../mocks/musics';
 
 	const dispatch = createEventDispatcher();
 
-	export let activeIndex = 0;
 	export let isPlaying = true;
 
-	$: currentTrack = musics[0]?.items[activeIndex] || musics[0]?.items[0];
+	let currentTrack = musics[0]?.items[0];
+	$: {
+		const track = $activeTrack;
+		const section = musics.find(s => s.name === track.sectionName);
+		currentTrack = section?.items[track.index];
+	}
 
 	let progress = 32;
 	let volume = 75;
@@ -27,8 +32,10 @@
 				</svg>
 			</button>
 			<div class="text-center flex-1">
-				<div class="text-tahoe-text-secondary text-[11px] uppercase tracking-wider font-medium">Playing From</div>
-				<div class="text-white text-sm font-medium">Your top mixes</div>
+				<div class="text-tahoe-text-secondary text-[11px] uppercase tracking-wider font-medium">
+					{currentTrack?.type ? currentTrack.type.charAt(0).toUpperCase() + currentTrack.type.slice(1) : 'Music'}
+				</div>
+				<div class="text-white text-sm font-medium">Now Playing</div>
 			</div>
 			<button class="text-tahoe-text-secondary p-1 -mr-1">
 				<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -38,12 +45,25 @@
 		</div>
 	</div>
 
-	<!-- Album Art -->
+	<!-- Media Display (Album Art or Video Player) -->
 	<div class="px-8 mt-4 flex-shrink-0">
-		<div class="w-full aspect-square max-w-sm mx-auto rounded-2xl overflow-hidden shadow-2xl">
-			{#if currentTrack}
+		<div class="w-full aspect-square max-w-sm mx-auto rounded-2xl overflow-hidden shadow-2xl bg-black">
+			{#if currentTrack?.type === 'video' || currentTrack?.type === 'movie'}
+				<!-- Video Player for videos/movies -->
+				<div class="w-full h-full bg-black flex items-center justify-center relative group">
+					<video
+						src={currentTrack.videoUrl}
+						class="w-full h-full object-cover"
+						controls
+						controlsList="nodownload"
+						poster={currentTrack.image}
+					></video>
+				</div>
+			{:else if currentTrack}
+				<!-- Album Art for songs/podcasts -->
 				<img src={currentTrack.image} alt={currentTrack.name} class="w-full h-full object-cover" />
 			{:else}
+				<!-- Placeholder -->
 				<div class="w-full h-full bg-tahoe-elevated flex items-center justify-center">
 					<svg class="w-20 h-20 text-tahoe-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
 						<path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
@@ -90,7 +110,14 @@
 				<svg class="w-7 h-7 text-black ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
 			{/if}
 		</button>
-		<button class="text-white" on:click={() => dispatch('nextSong')}>
+		<button class="text-white" on:click={() => {
+			dispatch('nextSong');
+			const track = $activeTrack;
+			const section = musics.find(s => s.name === track.sectionName);
+			const allTracks = section?.items || [];
+			const newIndex = (track.index + 1) % allTracks.length;
+			playTrack(track.sectionName, newIndex);
+		}}>
 			<svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
 		</button>
 		<button class="relative transition-colors {repeatMode > 0 ? 'text-tahoe-accent' : 'text-tahoe-text-secondary'}" on:click={() => (repeatMode = (repeatMode + 1) % 3)}>

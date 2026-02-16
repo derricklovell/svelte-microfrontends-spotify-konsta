@@ -1,15 +1,10 @@
 <script>
 	import { Block, Chip } from 'konsta/svelte';
+	import { activeTrack, playTrack } from '../../stores/media';
 	import { musics } from '../../mocks/musics';
-
-	let activeIndex = 0;
 
 	const categories = ['All', 'Music', 'Podcasts', 'Charts', 'New Releases'];
 	let activeCategory = 'All';
-
-	export function setActiveIndex(idx) {
-		activeIndex = idx;
-	}
 </script>
 
 <div class="w-full">
@@ -37,8 +32,8 @@
 			<div class="grid gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
 				{#each items as { image, name: trackName, publisher }, index}
 					<div
-						class="tahoe-card p-3 cursor-pointer {index === activeIndex ? 'ring-2 ring-tahoe-accent' : ''}"
-						on:click={() => (activeIndex = index)}
+						class="tahoe-card p-3 cursor-pointer {$activeTrack.sectionName === name && $activeTrack.index === index ? 'ring-2 ring-tahoe-accent' : ''}"
+						on:click={() => playTrack(name, index)}
 						on:keydown={() => {}}
 						role="button"
 						tabindex="0"
@@ -58,8 +53,8 @@
 			<div class="flex gap-3 px-4 pb-2 pt-2">
 				{#each items as { image, name: trackName, publisher }, index}
 					<div
-						class="tahoe-card p-2.5 cursor-pointer shrink-0 w-36 {index === activeIndex ? 'ring-2 ring-tahoe-accent' : ''}"
-						on:click={() => (activeIndex = index)}
+						class="tahoe-card p-2.5 cursor-pointer shrink-0 w-36 {$activeTrack.sectionName === name && $activeTrack.index === index ? 'ring-2 ring-tahoe-accent' : ''}"
+						on:click={() => playTrack(name, index)}
 						on:keydown={() => {}}
 						role="button"
 						tabindex="0"

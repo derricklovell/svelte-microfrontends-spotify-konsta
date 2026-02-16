@@ -15,7 +15,7 @@
 	} from 'konsta/svelte';
 	import { loadRemoteModule } from '@softarc/native-federation';
 	import { musics } from './mocks/musics';
-	import { onMount } from 'svelte';
+	import { onMount, mount } from 'svelte';
 	import { NEXT_SONG_EVENT } from '../../shared/shared';
 	import {
 		currentPage,
@@ -25,6 +25,7 @@
 		goBack,
 		pageHistory,
 	} from './stores/navigation';
+	import { activeTrack, nextTrack, playTrack } from './stores/media';
 
 	import HomePage from './components/pages/HomePage.svelte';
 	import SearchPage from './components/pages/SearchPage.svelte';
@@ -33,30 +34,41 @@
 
 	// MFE remote placeholder
 	let remoteAppTarget;
-	(async () => {
-		try {
-			const app = await loadRemoteModule('remote', './remote-mediaplayer');
-			if (remoteAppTarget) {
-				new app.default({ target: remoteAppTarget });
-			}
-		} catch (e) {
-			console.warn('Remote media player not available:', e);
-		}
-	})();
 
 	// Track state — player is ACTIVE by default
-	let activeIndex = 0;
-	$: currentTrack = musics[0]?.items[activeIndex] || musics[0]?.items[0];
+	let currentTrack = musics[0]?.items[0];
+	$: {
+		const track = $activeTrack;
+		// Find the section with the matching name
+		const section = musics.find(s => s.name === track.sectionName);
+		currentTrack = section?.items[track.index];
+	}
 	let isPlaying = true;
 	let miniProgress = 32;
 
 	const onNextSong = () => {
-		const allTracks = musics[0]?.items || [];
-		activeIndex = (activeIndex + 1) % allTracks.length;
+		const track = $activeTrack;
+		const section = musics.find(s => s.name === track.sectionName);
+		const allTracks = section?.items || [];
+		const newIndex = (track.index + 1) % allTracks.length;
+		playTrack(track.sectionName, newIndex);
 	};
 
 	onMount(function () {
 		window.addEventListener(NEXT_SONG_EVENT, onNextSong);
+
+		// Load remote module after component mounts
+		(async () => {
+			try {
+				const app = await loadRemoteModule('remote', './remote-mediaplayer');
+				if (remoteAppTarget) {
+					mount(app.default, { target: remoteAppTarget });
+				}
+			} catch (e) {
+				console.warn('Remote media player not available:', e);
+			}
+		})();
+
 		return () => window.removeEventListener(NEXT_SONG_EVENT, onNextSong);
 	});
 
@@ -169,11 +181,14 @@
 		onBackdropClick={() => nowPlayingOpen.set(false)}
 		colors={{ bgIos: 'bg-[#1a1a1c]', bgMaterial: 'bg-[#1a1a1c]' }}
 	>
-		<NowPlayingPage {activeIndex} {isPlaying} on:togglePlay={() => (isPlaying = !isPlaying)} on:nextSong={onNextSong} />
+		<NowPlayingPage {isPlaying} on:togglePlay={() => (isPlaying = !isPlaying)} on:nextSong={onNextSong} />
 	</Popup>
 
 	<!-- Main Layout (NO nested Page — just divs for content flow) -->
 	<Page colors={{ bgIos: 'bg-[#1a1a1c]', bgMaterial: 'bg-[#1a1a1c]' }}>
+		<div class="absolute top-0 left-0 bg-red-500 text-white px-2 py-1 text-xs z-50 pointer-events-none">
+			Test: innerWidth={innerWidth}, isMobile={isMobile}
+		</div>
 		<div class="flex h-full w-full">
 			<!-- Desktop sidebar (persistent) -->
 			{#if isDesktop}
@@ -275,11 +290,27 @@
 	<!-- MOBILE: Fixed mini player — sits between content and tabbar -->
 	{#if isMobile && currentTrack && !$nowPlayingOpen}
 		<div class="fixed left-0 right-0 z-[100] now-playing-gradient border-t border-tahoe-separator" style="bottom: 50px;">
-			<button
-				class="w-full flex items-center px-3 py-2 gap-3"
+			<div
+				class="w-full flex items-center px-3 py-2 gap-3 cursor-pointer hover:bg-white/5 transition-colors"
 				on:click={() => nowPlayingOpen.set(true)}
+				role="button"
+				tabindex="0"
+				on:keydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						nowPlayingOpen.set(true);
+					}
+				}}
 			>
-				<img src={currentTrack.image} alt={currentTrack.name} class="w-10 h-10 rounded-lg object-cover shrink-0" />
+				<div class="relative shrink-0">
+					<img src={currentTrack.image} alt={currentTrack.name} class="w-10 h-10 rounded-lg object-cover" />
+					{#if currentTrack.type === 'video' || currentTrack.type === 'movie'}
+						<div class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
+							<svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+								<path d="M8 5v14l11-7z" />
+							</svg>
+						</div>
+					{/if}
+				</div>
 				<div class="flex-1 min-w-0 text-left">
 					<div class="text-white text-sm font-medium truncate">{currentTrack.name}</div>
 					<div class="text-tahoe-text-secondary text-xs truncate">{currentTrack.publisher || ''}</div>
@@ -294,7 +325,7 @@
 				<button class="text-white p-2" on:click|stopPropagation={onNextSong}>
 					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
 				</button>
-			</button>
+			</div>
 			<div class="h-0.5 bg-tahoe-separator">
 				<div class="h-full bg-tahoe-accent transition-all" style="width: {miniProgress}%"></div>
 			</div>
