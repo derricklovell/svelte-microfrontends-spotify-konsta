@@ -12,6 +12,7 @@
 		Link,
 		Popup,
 		Range,
+		useTheme,
 	} from 'konsta/svelte';
 	import { loadRemoteModule } from '@softarc/native-federation';
 	import { musics } from './mocks/musics';
@@ -31,6 +32,9 @@
 	import SearchPage from './components/pages/SearchPage.svelte';
 	import LibraryPage from './components/pages/LibraryPage.svelte';
 	import NowPlayingPage from './components/pages/NowPlayingPage.svelte';
+
+	// Get the current theme from App component
+	const theme = $derived(useTheme());
 
 	// MFE remote placeholder
 	let remoteAppTarget;
@@ -402,19 +406,26 @@
 			icons
 			labels
 			class="!fixed !bottom-0 !left-0 !right-0 !z-[90] {isDesktop ? '!ml-64 xl:!ml-72' : ''}"
-			colors={{
+			colors={theme === 'ios' ? {
 				bgIos: 'bg-[#1a1a1c]/95 backdrop-blur-xl',
+			} : {
+				bgMaterial: 'bg-[#1a1a1c]/95 backdrop-blur-xl',
 			}}
 		>
 			<TabbarLink
 				active={$currentPage === 'home'}
 				label="Home"
 				on:click={() => navigateTo('home')}
-				colors={{
+				colors={theme === 'ios' ? {
 					textActiveIos: 'text-tahoe-accent',
 					textIos: 'text-tahoe-text-secondary',
 					iconBgActiveIos: 'bg-transparent',
 					iconBgIos: 'bg-transparent',
+				} : {
+					textActiveMaterial: 'text-tahoe-accent',
+					textMaterial: 'text-tahoe-text-secondary',
+					iconBgActiveMaterial: 'bg-transparent',
+					iconBgMaterial: 'bg-transparent',
 				}}
 			>
 				<svelte:fragment slot="icon">
@@ -425,11 +436,16 @@
 				active={$currentPage === 'search'}
 				label="Search"
 				on:click={() => navigateTo('search')}
-				colors={{
+				colors={theme === 'ios' ? {
 					textActiveIos: 'text-tahoe-accent',
 					textIos: 'text-tahoe-text-secondary',
 					iconBgActiveIos: 'bg-transparent',
 					iconBgIos: 'bg-transparent',
+				} : {
+					textActiveMaterial: 'text-tahoe-accent',
+					textMaterial: 'text-tahoe-text-secondary',
+					iconBgActiveMaterial: 'bg-transparent',
+					iconBgMaterial: 'bg-transparent',
 				}}
 			>
 				<svelte:fragment slot="icon">
@@ -440,11 +456,16 @@
 				active={$currentPage === 'library'}
 				label="Library"
 				on:click={() => navigateTo('library')}
-				colors={{
+				colors={theme === 'ios' ? {
 					textActiveIos: 'text-tahoe-accent',
 					textIos: 'text-tahoe-text-secondary',
 					iconBgActiveIos: 'bg-transparent',
 					iconBgIos: 'bg-transparent',
+				} : {
+					textActiveMaterial: 'text-tahoe-accent',
+					textMaterial: 'text-tahoe-text-secondary',
+					iconBgActiveMaterial: 'bg-transparent',
+					iconBgMaterial: 'bg-transparent',
 				}}
 			>
 				<svelte:fragment slot="icon">
