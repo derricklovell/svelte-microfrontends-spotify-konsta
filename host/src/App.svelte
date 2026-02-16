@@ -40,14 +40,12 @@
 	let remoteAppTarget;
 
 	// Track state — player is ACTIVE by default
-	let currentTrack = musics[0]?.items[0];
-	$: {
+	let currentTrack = $derived.by(() => {
 		const track = $activeTrack;
-		// Find the section with the matching name
 		const section = musics.find(s => s.name === track.sectionName);
-		currentTrack = section?.items[track.index];
-	}
-	let isPlaying = true;
+		return section?.items[track.index] || musics[0]?.items[0];
+	});
+	let isPlaying = $state(true);
 	let miniProgress = 32;
 
 	const onNextSong = () => {
@@ -77,13 +75,17 @@
 	});
 
 	// Responsive detection
-	let innerWidth = 0;
-	$: isDesktop = innerWidth >= 1024;
-	$: isTablet = innerWidth >= 768 && innerWidth < 1024;
-	$: isMobile = innerWidth < 768;
+	let innerWidth = $state(0);
+	let isDesktop = $derived(innerWidth >= 1024);
+	let isTablet = $derived(innerWidth >= 768 && innerWidth < 1024);
+	let isMobile = $derived(innerWidth < 768);
 
 	// Dynamic navbar title
-	$: navbarTitle = $currentPage === 'home' ? 'Browse' : $currentPage === 'search' ? 'Search' : $currentPage === 'library' ? 'Your Library' : 'Browse';
+	let navbarTitle = $derived(
+		$currentPage === 'home' ? 'Browse' : 
+		$currentPage === 'search' ? 'Search' : 
+		$currentPage === 'library' ? 'Your Library' : 'Browse'
+	);
 </script>
 
 <svelte:window bind:innerWidth />
